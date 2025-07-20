@@ -179,7 +179,7 @@ export default function DataTablePage() {
                     value={category}
                     className="capitalize"
                   >
-                    {category}
+                    {category.split("_")[0]}
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -189,18 +189,6 @@ export default function DataTablePage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>
-                          <Button
-                            variant="ghost"
-                            className="p-0 font-medium hover:bg-transparent"
-                            onClick={() => requestSort("user")}
-                          >
-                            <span className="flex items-center">
-                              User
-                              {/* {getSortIcon("user")} */}
-                            </span>
-                          </Button>
-                        </TableHead>
                         <TableHead>
                           <Button
                             variant="ghost"
@@ -233,10 +221,7 @@ export default function DataTablePage() {
                       )}
                       {items.map((item, index) => (
                         <TableRow key={`${category}-${index}`}>
-                          <TableCell className="font-medium">
-                            {item.name}
-                          </TableCell>
-                          <TableCell>{item.project}</TableCell>
+                          <TableCell className="capitalize">{item.project.split("_")[0]}</TableCell>
                           <TableCell>{item.content}</TableCell>
                         </TableRow>
                       ))}

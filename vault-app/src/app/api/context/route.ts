@@ -2,7 +2,6 @@ import { client } from "@/lib/redis";
 import { NextRequest } from "next/server";
 
 function parseDoc(doc) {
-  // Assuming doc.id is the array like you showed
   const arr = doc.id;
   const obj = {};
 
@@ -26,17 +25,15 @@ export const GET = async (req: NextRequest) => {
 
   await client.close();
 
+  console.log("RESULT", result)
+
   if (!result || result.total === 0) return Response.json([]);
 
-  const response = result.documents.map((doc) => {
-    const result = parseDoc(doc);
-
-    if (Object.keys(result).length !== 4) return null;
-
+  const response = result.documents.map((doc) => {      
     return {
-      user: result.user,
-      project: result.project,
-      content: result.content,
+      user: doc.value.user,
+      project: doc.value.project,
+      content: doc.value.content,
     };
   });
 
