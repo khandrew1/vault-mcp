@@ -1,9 +1,10 @@
 from dotenv import load_dotenv
-import os
+import json
 from redisvl.index import SearchIndex
 from redis import Redis
 from redisvl.query import VectorQuery
 from redisvl.utils.vectorize import HFTextVectorizer
+import numpy as np
 
 load_dotenv()
 
@@ -23,10 +24,10 @@ class VectorStore:
                     "name": "embedding",
                     "type": "vector",
                     "attrs": {
-                        "dims": 784,
+                        "dims": 768,
                         "distance_metric": "cosine",
                         "algorithm": "flat",
-                        "datatype": "float32"
+                        "datatype": "float64"
                     }
                 }
             ]
@@ -36,7 +37,7 @@ class VectorStore:
         self.index = SearchIndex.from_dict(self.schema, redis_client=client, validate_on_load=True)
         self.index.create(overwrite=True, drop=False)
 
-        self.hf = HFTextVectorizer(model="sentence-transformers/all-MiniLM-L6-v2")
+        self.hf = HFTextVectorizer(model="sentence-transformers/all-mpnet-base-v2")
 
     def query(self, sentence):
         vector = self._embed(sentence)
@@ -53,13 +54,24 @@ class VectorStore:
     def add(self, sentence):
         data = {
             "content": sentence,
-            'embedding': self._embed(sentence)
+            'embedding': self._embed(sentence).tobytes()
         }
 
         self.index.load([data])
 
-    def seed(self, data):
+    def seed(self, filename):
+        data = []
+
+        with open(filename, "r") as f:
+            contents = json.load(f)
+
+        for content in contents:
+            data.append({
+                "content": content,
+                "embedding": self._embed(content).tobytes()
+            })
+
         self.index.load(data)
     
     def _embed(self, sentence: str):
-        return self.hf.embed(sentence)
+        return np.array(self.hf.embed(sentence), dtype=np.float64)
