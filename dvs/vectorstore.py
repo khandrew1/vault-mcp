@@ -4,6 +4,7 @@ from redis import Redis
 from redisvl.query import VectorQuery
 from redisvl.utils.vectorize import HFTextVectorizer
 import numpy as np
+from redisvl.query.filter import Tag
 
 class VectorStore:
     def __init__(self, hostname = "redis://localhost:6379", index = "context"):
@@ -44,15 +45,20 @@ class VectorStore:
 
         self.hf = HFTextVectorizer(model="sentence-transformers/all-mpnet-base-v2")
 
-    def query(self, sentence):
+    def query(self, id, sentence, project = None):
         vector = self._embed(sentence).tobytes()
         
         query = VectorQuery(
             vector=vector,
             vector_field_name="embedding",
             return_fields=["project", "user", "content"],
-            num_results=3
+            num_results=3,
         )
+
+        query.set_filter(Tag("user") == id)
+
+        if project:
+            query.set_filter(Tag("project") == project)
 
         return self.index.query(query)
     
