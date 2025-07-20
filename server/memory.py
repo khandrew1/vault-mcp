@@ -1,27 +1,24 @@
-from __future__ import annotations
-
+from abc import ABC, abstractmethod
+from typing import Any
 from pydantic import Field
 from enrichmcp.entity import EnrichModel
+from dvs.node import VectorStore
 
 class MemoryNote(EnrichModel):
     """A single note entry.
 
     Parameters
     ----------
-    id:
-        Unique identifier for the note. ``MemoryStore`` implementations
-        generate this value when a note is created.
     title:
         Short title summarizing the note.
     content:
         The full body of the note.
     """
 
-    id: str = Field(description="Unique note identifier")
     title: str = Field(description="Note title")
     content: str = Field(description="Note content")
 
-class ChatContextSummary(EnrichModel):
+class ContextSummary(EnrichModel):
     """A summary of an LLM chat conversation context.
 
     This model captures the essential information from a chat session
@@ -31,18 +28,100 @@ class ChatContextSummary(EnrichModel):
 
     Parameters
     ----------
-    id:
-        Unique identifier for the chat context summary.
     title:
         Brief title describing the main topic or purpose of the conversation.
     summary:
         Paragraph summary highlighting the key points, decisions, and outcomes
         from the chat conversation. Should be concise but comprehensive.
-    key_topics:
-        List of main topics or themes discussed in the conversation.
     """
 
-    id: str = Field(description="Unique chat context summary identifier")
     title: str = Field(description="Brief title describing the conversation topic")
     summary: str = Field(description="Paragraph summary of key points, decisions, and outcomes")
-    key_topics: list[str] = Field(default_factory=list, description="Main topics discussed")
+
+class MemoryStore(ABC):
+    """Abstract base class for memory note store"""
+
+    @abstractmethod
+    def save(self, project: str, note: MemoryNote) -> None:
+        """Save a new note under a specific project."""
+
+    @abstractmethod
+    def search(self, project: str, query: str) -> Any:
+        """Search for notes under a specific project based on a query."""
+
+class ContextStore(ABC):
+    """Abstract base class for context summary store"""
+
+    @abstractmethod
+    def save(self, project: str, context: ContextSummary) -> None:
+        """Save a new context summary under a specific project."""
+
+    @abstractmethod
+    def search(self, project: str, query: str) -> Any:
+        """Search for context summaries under a specific project based on a query."""
+
+class MemoryVectorStore(MemoryStore):
+    """Concrete implementation of a memory store using a vector database."""
+
+    def __init__(self, user: str, vector_store: VectorStore):
+        self.vector_store = vector_store
+        self.user = user
+
+    def save(self, project: str, note: MemoryNote) -> None:
+        """Save a new note in the vector store."""
+        self.vector_store.add(project=project, user=self.user, sentence=note.content)
+
+    def search(self, project: str, query: str):
+        """Search for notes based on a query."""
+        return self.vector_store.query(query)
+
+class ContextVectorStore(ContextStore):
+    """Concrete implementation of a context store using a vector database."""
+
+    def __init__(self, user: str, vector_store: VectorStore):
+        self.vector_store = vector_store
+        self.user = user
+
+    def save(self, project: str, context: ContextSummary) -> None:
+        """Save a new context summary in the vector store."""
+        # Combine title and summary for better searchability
+        content = f"{context.title}: {context.summary}"
+        self.vector_store.add(project=project, user=self.user, sentence=content)
+
+    def search(self, project: str, query: str):
+        """Search for context summaries based on a query."""
+        return self.vector_store.query(query)
+
+class MemoryProject:
+    """Groups notes related to a specific project or topic."""
+
+    def __init__(self, name: str, store: MemoryVectorStore):
+        self.name = name
+        self.store = store
+
+    def add_note(self, title: str, content: str) -> MemoryNote:
+        """Create a new note"""
+        note = MemoryNote(title=title, content=content)
+        self.store.save(project=self.name, note=note)
+        return note
+
+    def get_note(self, query: str):
+        """Search for notes in the project"""
+        return self.store.search(project=self.name, query=query)
+
+class ContextProject:
+    """Groups context summaries related to a specific project or topic."""
+
+    def __init__(self, name: str, store: ContextVectorStore):
+        self.name = name
+        self.store = store
+
+    def add_context(self, title: str, summary: str) -> ContextSummary:
+        """Create a new context summary"""
+        context = ContextSummary(title=title, summary=summary)
+        self.store.save(project=self.name, context=context)
+        return context
+
+    def get_context(self, query: str):
+        """Search for context summaries in the project"""
+        return self.store.search(project=self.name, query=query)
