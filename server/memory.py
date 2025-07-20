@@ -75,9 +75,9 @@ class MemoryVectorStore(MemoryStore):
         """Save a new note in the vector store."""
         self.vector_store.add(project=project, user=self.user, sentence=note.content)
 
-    def search(self, project: str, query: str):
+    def search(self, query: str):
         """Search for notes based on a query."""
-        return self.vector_store.query(id=self.user, sentence=query, project=project)
+        return self.vector_store.query(id=self.user, sentence=query)
 
 class ContextVectorStore(ContextStore):
     """Concrete implementation of a context store using a vector database."""

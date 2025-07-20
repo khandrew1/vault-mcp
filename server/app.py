@@ -77,11 +77,11 @@ async def create_note(
     return Note.model_validate(note.model_dump())
 
 @app.retrieve
-async def get_note(query: str) -> Note | None:
+async def get_note(query: str):
     """Search for notes in the memory vector store based on a query."""
-    results = memory_vector_store.search("general", query=query)
+    results = memory_vector_store.search(query=query)
     if results:
-        return {"content": results[0].content, "title": results[0].title}
+        return {"content": results}
     return None
 
 @app.create
