@@ -40,13 +40,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="py-6 pr-6">
               <nav className="flex flex-col gap-2">
                 <Button variant="ghost" size="sm" className="justify-start" asChild>
-                  <Link href="/dashboard/api-keys">
+                  <Link href="/dashboard/keys">
                     <Key className="mr-2 h-4 w-4" />
                     API Keys
                   </Link>
                 </Button>
                 <Button variant="ghost" size="sm" className="justify-start" asChild>
-                  <Link href="/dashboard/data">
+                  <Link href="/dashboard/projects">
                     <Table className="mr-2 h-4 w-4" />
                     Data Table
                   </Link>

@@ -42,7 +42,7 @@ export default function DashboardPage() {
               Access and analyze your project data in a structured format.
             </p>
             <Button asChild>
-              <Link href="/dashboard/data">
+              <Link href="/dashboard/projects">
                 <Table className="mr-2 h-4 w-4" />
                 View Data Table
               </Link>
