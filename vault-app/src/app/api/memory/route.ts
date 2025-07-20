@@ -40,7 +40,5 @@ export const GET = async (req: NextRequest) => {
     };
   });
 
-  // console.log(response)
-
   return Response.json(response.filter((data) => data !== null));
 };

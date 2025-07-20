@@ -50,8 +50,6 @@ export default function ApiKeysPage() {
 
   if (!isSignedIn) return null;
 
-  console.log(user);
-
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast("Copied to clipboard", {

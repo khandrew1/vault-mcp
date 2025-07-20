@@ -43,8 +43,6 @@ export const GET = async () => {
 
   await client.connect();
 
-  console.log(primaryEmailAddressId);
-
   const result = await client.ft.search(
     "vault:users",
     `@id:${primaryEmailAddressId}`,
@@ -59,8 +57,6 @@ export const GET = async () => {
 
   if (result.total > 0) {
     const doc = result.documents[0];
-
-    console.log(doc.value.projects?.split(",") ?? []);
 
     return Response.json(doc.value.projects?.split(",") ?? []);
   } else {

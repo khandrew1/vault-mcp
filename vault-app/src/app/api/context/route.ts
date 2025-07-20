@@ -25,8 +25,6 @@ export const GET = async (req: NextRequest) => {
 
   await client.close();
 
-  console.log("RESULT", result)
-
   if (!result || result.total === 0) return Response.json([]);
 
   const response = result.documents.map((doc) => {      
@@ -36,8 +34,6 @@ export const GET = async (req: NextRequest) => {
       content: doc.value.content,
     };
   });
-
-  // console.log(response)
 
   return Response.json(response.filter((data) => data !== null));
 };

@@ -57,8 +57,6 @@ export default function DataTablePage() {
 
       const data = await response.json();
 
-      console.log("DATA", data);
-
       setProjects(data);
 
       onClick(data[0]);
@@ -68,8 +66,6 @@ export default function DataTablePage() {
   }, []);
 
   const categories = projects;
-
-  console.log("CAT", categories);
 
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Item | null;
