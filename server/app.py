@@ -43,7 +43,7 @@ async def get_all_projects() -> List[str]:
 async def create_note(
     title: str,
     content: str,
-    project: str
+    project: str = "general"
 ) -> Note:
     """Create a new note in the memory vector store
 
@@ -53,6 +53,7 @@ async def create_note(
 
     Projects are used to group notes together, run `get_all_projects` FIRST
     in order to see the best fit. If nothing fits, create a new project.
+    If no project is specified, it will default to 'general'.
     """
     note = Note(title=title, content=content)
     memory_vector_store.save(project, note) 
@@ -61,7 +62,7 @@ async def create_note(
 @app.retrieve
 async def get_note(query: str) -> Note | None:
     """Search for notes in the memory vector store based on a query."""
-    results = memory_project.get_note(query=query)
+    results = memory_vector_store.search("general", query=query)
     if results:
         return Note.model_validate(results[0].model_dump())
     return None
