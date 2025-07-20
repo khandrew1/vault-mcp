@@ -91,37 +91,3 @@ class ContextVectorStore(ContextStore):
     def search(self, project: str, query: str):
         """Search for context summaries based on a query."""
         return self.vector_store.query(query)
-
-class MemoryProject:
-    """Groups notes related to a specific project or topic."""
-
-    def __init__(self, name: str, store: MemoryVectorStore):
-        self.name = name
-        self.store = store
-
-    def add_note(self, title: str, content: str) -> MemoryNote:
-        """Create a new note"""
-        note = MemoryNote(title=title, content=content)
-        self.store.save(project=self.name, note=note)
-        return note
-
-    def get_note(self, query: str):
-        """Search for notes in the project"""
-        return self.store.search(project=self.name, query=query)
-
-class ContextProject:
-    """Groups context summaries related to a specific project or topic."""
-
-    def __init__(self, name: str, store: ContextVectorStore):
-        self.name = name
-        self.store = store
-
-    def add_context(self, title: str, summary: str) -> ContextSummary:
-        """Create a new context summary"""
-        context = ContextSummary(title=title, summary=summary)
-        self.store.save(project=self.name, context=context)
-        return context
-
-    def get_context(self, query: str):
-        """Search for context summaries in the project"""
-        return self.store.search(project=self.name, query=query)

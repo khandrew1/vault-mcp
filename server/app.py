@@ -1,6 +1,4 @@
 import os
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from enrichmcp import EnrichMCP
 from dvs.vectorstore import VectorStore
@@ -25,11 +23,8 @@ db = Database(
 )
 app = EnrichMCP(title="vault-mcp", description="An MCP to save and load context and memories")
 
-memory_vector_store = MemoryVectorStore(user="default", vector_store=VectorStore(hostname=os.getenv("REDIS_HOSTNAME", "default"), index="memory"))
-memory_project = MemoryProject(name="default", store=memory_vector_store)
-
-context_vector_store = ContextVectorStore(user="default", vector_store=VectorStore(hostname=os.getenv("REDIS_HOSTNAME", "default"), index="context"))
-context_project = ContextProject(name="default", store=context_vector_store)
+memory_vector_store = MemoryVectorStore(user=os.getenv("VAULT_API_KEY", "default"), vector_store=VectorStore(hostname=os.getenv("REDIS_HOSTNAME", "default"), index="memory"))
+context_vector_store = ContextVectorStore(user=os.getenv("VAULT_API_KEY", "default"), vector_store=VectorStore(hostname=os.getenv("REDIS_HOSTNAME", "default"), index="context"))
 
 @app.entity
 class Note(MemoryNote):
