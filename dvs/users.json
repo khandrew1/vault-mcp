@@ -1,0 +1,17 @@
+[
+{
+    "id": "123", 
+    "name": "Paul John",
+    "projects": ["one", "two"]
+},
+{
+    "id": "456", 
+    "name": "Eden Zamir",
+    "projects": ["two", "three"]
+},
+{
+    "id": "789", 
+    "name": "Paul Zamir",
+    "projects": ["three", "four"]
+}
+]
