@@ -2,8 +2,8 @@ runtime: "container"
 start:
   command: ["uv", "run", "app.py"]
 build:
-  dockerfile: "Dockerfile"           # Path to your Dockerfile
-  dockerBuildPath: "."               # Docker build context
+  dockerfile: "server/Dockerfile"    # Path to Dockerfile from parent context
+  dockerBuildPath: ".."              # Build from parent directory
 startCommand:
   type: "http"
   configSchema:                      # JSON Schema for configuration
