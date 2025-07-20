@@ -80,8 +80,8 @@ class VectorStore:
 
         for content in contents:
             data.append({
-                "project": "sample_project",
-                "user": "jane_doe",
+                "project": "marketing_456",
+                "user": "idn_309aTYWEZUoi8sWqDtTs6rK5e3E",
                 "content": content,
                 "embedding": self._embed(content).tobytes()
             })

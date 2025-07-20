@@ -2,12 +2,19 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install requirements first (better Docker layer caching)
-COPY server/requirements.txt ./requirements.txt
-RUN pip install -r requirements.txt
+# Install uv
+RUN pip install uv
+
+# Copy project files for uv
+COPY pyproject.toml uv.lock ./
+
+# Install dependencies using uv (much faster than pip)
+# uv will handle PyTorch installation efficiently
+RUN uv sync --frozen
 
 # Pre-download the model early (this layer will be cached)
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-mpnet-base-v2')"
+# The model files are downloaded at runtime by sentence-transformers, not during pip/uv install
+RUN uv run python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-mpnet-base-v2')"
 
 # Copy the dvs directory (now accessible from parent context)
 COPY dvs ./dvs
@@ -21,4 +28,4 @@ EXPOSE 8000
 # Set default PORT if not provided
 ENV PORT=8000
 
-CMD ["python", "server/app.py"]
+CMD ["uv", "run", "server/app.py"]

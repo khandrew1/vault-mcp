@@ -31,7 +31,7 @@ export default function DashboardPage() {
               Create, view, and delete API keys for accessing our services.
             </p>
             <Button asChild>
-              <Link href="/dashboard/api-keys">
+              <Link href="/dashboard/keys">
                 <Key className="mr-2 h-4 w-4" />
                 Manage API Keys
               </Link>
@@ -40,7 +40,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Data Table</CardTitle>
+            <CardTitle>Projects</CardTitle>
             <CardDescription>View and manage your data</CardDescription>
           </CardHeader>
           <CardContent>
@@ -48,9 +48,15 @@ export default function DashboardPage() {
               Access and analyze your project data in a structured format.
             </p>
             <Button asChild>
-              <Link href="/dashboard/projects">
+              <Link href="/dashboard/memories">
                 <Table className="mr-2 h-4 w-4" />
-                View Data Table
+                View Memories
+              </Link>
+            </Button>
+             <Button asChild>
+              <Link href="/dashboard/context">
+                <Table className="mr-2 h-4 w-4" />
+                View Context
               </Link>
             </Button>
           </CardContent>
