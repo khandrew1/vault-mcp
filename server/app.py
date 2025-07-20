@@ -1,29 +1,47 @@
 import os
 import sys
+
+# Add parent directory to Python path to import dvs module
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from enrichmcp import EnrichMCP
 from dvs.vectorstore import VectorStore
+from dvs.db import Database
 from memory import (
     MemoryNote, 
     ContextSummary,
     MemoryVectorStore,
-    MemoryProject,
     ContextVectorStore,
-    ContextProject,
 )
 
+from typing import List
 from dotenv import load_dotenv
+
+import logging
+import sys
+
+# Send all logging to stderr, and raise the level so INFO/DEBUG don’t go to stdout
+logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
+
+# Silence redis‑py’s own loggers
+logging.getLogger("redis").setLevel(logging.ERROR)
+logging.getLogger("redis.cluster").setLevel(logging.ERROR)
+
+# If redisvl has its own logger namespace, silence that too:
+logging.getLogger("redisvl").setLevel(logging.ERROR)
 
 load_dotenv()
 
+db = Database(
+    host=os.getenv("REDIS_HOST", "localhost"),
+    port=os.getenv("REDIS_PORT", "6379"),
+    password=os.getenv("REDIS_PASSWORD", "password")
+)
+user = os.getenv("VAULT_API_KEY", "default")
 app = EnrichMCP(title="vault-mcp", description="An MCP to save and load context and memories")
 
-memory_vector_store = MemoryVectorStore(user="default", vector_store=VectorStore(hostname=os.getenv("REDIS_HOSTNAME", "default"), index="memory"))
-memory_project = MemoryProject(name="default", store=memory_vector_store)
-
-context_vector_store = ContextVectorStore(user="default", vector_store=VectorStore(hostname=os.getenv("REDIS_HOSTNAME", "default"), index="context"))
-context_project = ContextProject(name="default", store=context_vector_store)
+memory_vector_store = MemoryVectorStore(user=user, vector_store=VectorStore(hostname=os.getenv("REDIS_HOSTNAME", "default"), index="memory"))
+context_vector_store = ContextVectorStore(user=user, vector_store=VectorStore(hostname=os.getenv("REDIS_HOSTNAME", "default"), index="context"))
 
 @app.entity
 class Note(MemoryNote):
@@ -33,48 +51,71 @@ class Note(MemoryNote):
 class Context(ContextSummary):
     """A context summary stored in the context_vector_store"""
 
+@app.retrieve
+async def get_all_projects():
+    """Retrieve all projects from the memory vector store"""
+    return { "projects": db.get_all_projects(user) }
+
 @app.create
 async def create_note(
     title: str,
-    content: str
+    content: str,
+    project: str = "general"
 ) -> Note:
     """Create a new note in the memory vector store
-    
+
     This should be used whenever something useful about a user is learned.
     Remember useful details and summarize them in a short sentence. This call is relevant
     in all conversations.
+
+    Projects are used to group notes together, run `get_all_projects` FIRST
+    in order to see the best fit. If nothing fits, create a new project.
+    If no project is specified, it will default to 'general'.
     """
-    note = memory_project.add_note(title=title, content=content) 
+    note = Note(title=title, content=content)
+    memory_vector_store.save(project, note) 
     return Note.model_validate(note.model_dump())
 
 @app.retrieve
 async def get_note(query: str) -> Note | None:
     """Search for notes in the memory vector store based on a query."""
-    results = memory_project.get_note(query=query)
+    results = memory_vector_store.search("general", query=query)
     if results:
-        return Note.model_validate(results[0].model_dump())
+        return {"content": results[0].content, "title": results[0].title}
     return None
 
 @app.create
 async def create_context(
     title: str,
-    summary: str
+    summary: str,
+    project: str = "general"
 ) -> Context:
     """Create a new context summary in the context vector store
+
+    This should be used to save important conversation context that can be
+    retrieved later to provide background for future conversations. This tool
+    should only be called specifically when the user asks to save context.
     
-    This should be used to save important conversation context that should be
-    remembered for future conversations. Use this for key decisions, outcomes,
-    and important discussion points.
+    Projects are used to group context summaries together, run `get_all_projects` FIRST
+    in order to see the best fit. If nothing fits, create a new project.
+    If no project is specified, it will default to 'general'.
     """
-    context = context_project.add_context(title=title, summary=summary)
+    context = Context(title=title, summary=summary)
+    context_vector_store.save(project, context)
     return Context.model_validate(context.model_dump())
 
 @app.retrieve
-async def get_context(query: str) -> Context | None:
+async def get_context(query: str, project: str = "general") -> Context | None:
     """Search for context summaries in the context vector store based on a query."""
-    results = context_project.get_context(query=query)
+    results = context_vector_store.search(project, query=query)
     if results:
-        return Context.model_validate(results[0].model_dump())
+        # Parse the content back into title and summary
+        content = results[0].content
+        if ": " in content:
+            title, summary = content.split(": ", 1)
+            return {"title": title, "summary": summary}
+        else:
+            return {"title": "Context", "summary": content}
     return None
 
 if __name__ == "__main__":
