@@ -2,14 +2,18 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Install requirements first (better Docker layer caching)
+COPY server/requirements.txt ./requirements.txt
+RUN pip install -r requirements.txt
+
+# Pre-download the model early (this layer will be cached)
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-mpnet-base-v2')"
+
 # Copy the dvs directory (now accessible from parent context)
 COPY dvs ./dvs
 
 # Copy server files
 COPY server ./server
-
-# Install requirements
-RUN pip install -r server/requirements.txt
 
 # Expose the port
 EXPOSE 8000
