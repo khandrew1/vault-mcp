@@ -13,6 +13,19 @@ from memory import (
 from typing import List
 from dotenv import load_dotenv
 
+import logging
+import sys
+
+# Send all logging to stderr, and raise the level so INFO/DEBUG don’t go to stdout
+logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
+
+# Silence redis‑py’s own loggers
+logging.getLogger("redis").setLevel(logging.ERROR)
+logging.getLogger("redis.cluster").setLevel(logging.ERROR)
+
+# If redisvl has its own logger namespace, silence that too:
+logging.getLogger("redisvl").setLevel(logging.ERROR)
+
 load_dotenv()
 
 db = Database(
@@ -35,9 +48,9 @@ class Context(ContextSummary):
     """A context summary stored in the context_vector_store"""
 
 @app.retrieve
-async def get_all_projects() -> List[str]:
+async def get_all_projects():
     """Retrieve all projects from the memory vector store"""
-    return db.get_all_projects(user)
+    return { "projects": db.get_all_projects(user) }
 
 @app.create
 async def create_note(
