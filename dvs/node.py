@@ -14,6 +14,14 @@ class VectorStore:
             },
             "fields": [
                 {
+                    "name": "project",
+                    "type": "tag"
+                },
+                {
+                    "name": "user",
+                    "type": "tag"
+                },
+                {
                     "name": "content",
                     "type": "text"
                 },
@@ -42,14 +50,16 @@ class VectorStore:
         query = VectorQuery(
             vector=vector,
             vector_field_name="embedding",
-            return_fields=["content"],
+            return_fields=["project", "user", "content"],
             num_results=3
         )
 
         return self.index.query(query)
     
-    def add(self, sentence):
+    def add(self, project, user, sentence):
         data = {
+            "project": project,
+            "user": user,
             "content": sentence,
             'embedding': self._embed(sentence).tobytes()
         }
@@ -64,6 +74,8 @@ class VectorStore:
 
         for content in contents:
             data.append({
+                "project": "sample_project",
+                "user": "jane_doe",
                 "content": content,
                 "embedding": self._embed(content).tobytes()
             })
