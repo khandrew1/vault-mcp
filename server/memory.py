@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 from pydantic import Field
 from enrichmcp.entity import EnrichModel
-from dvs.vectorstore import VectorStore
+from vectorstore import VectorStore
 
 class MemoryNote(EnrichModel):
     """A single note entry.
