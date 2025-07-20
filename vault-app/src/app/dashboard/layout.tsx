@@ -1,17 +1,17 @@
-import type React from "react"
-import type { Metadata } from "next"
-import Link from "next/link"
-import { LayoutDashboard, Key, Table } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ThemeProvider } from "@/components/theme-provider"
+import type React from "react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { LayoutDashboard, Key, Table } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "API Key Management Dashboard",
-}
+};
 
 interface DashboardLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
@@ -39,13 +39,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="-ml-2 hidden overflow-y-auto border-r md:sticky md:block w-2/12">
             <div className="py-6 pr-6">
               <nav className="flex flex-col gap-2">
-                <Button variant="ghost" size="sm" className="justify-start" asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start"
+                  asChild
+                >
                   <Link href="/dashboard/keys">
                     <Key className="mr-2 h-4 w-4" />
                     API Keys
                   </Link>
                 </Button>
-                <Button variant="ghost" size="sm" className="justify-start" asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start"
+                  asChild
+                >
                   <Link href="/dashboard/projects">
                     <Table className="mr-2 h-4 w-4" />
                     Data Table
@@ -54,9 +64,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               </nav>
             </div>
           </div>
-          <main className="flex w-10/12 flex-col overflow-hidden py-6 p-4">{children}</main>
+          <main className="flex w-10/12 flex-col overflow-hidden py-6 p-4">
+            {children}
+          </main>
         </div>
       </div>
     </ThemeProvider>
-  )
+  );
 }

@@ -9,8 +9,7 @@ import {
   // SignedIn,
   // SignedOut,
   // UserButton,
-} from '@clerk/nextjs'
-
+} from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-   <ClerkProvider>
+    <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <head />
         <body>
@@ -38,6 +37,6 @@ export default function RootLayout({
           <Toaster />
         </body>
       </html>
-      </ClerkProvider>
+    </ClerkProvider>
   );
 }
