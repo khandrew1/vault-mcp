@@ -40,7 +40,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Context</CardTitle>
+            <CardTitle>Projects</CardTitle>
             <CardDescription>View and manage your data</CardDescription>
           </CardHeader>
           <CardContent>
