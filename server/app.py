@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from enrichmcp import EnrichMCP
-from dvs.node import VectorStore
+from dvs.vectorstore import VectorStore
 from memory import (
     MemoryNote, 
     ContextSummary,
