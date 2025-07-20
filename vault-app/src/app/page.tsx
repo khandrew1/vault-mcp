@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 
 export default function Component() {
   return (
@@ -71,10 +72,14 @@ export default function Component() {
                 </p>
               </div>
               <div className="space-x-4">
-                <Button size="lg">
-                  Get Started
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <SignInButton />
+
+                <SignUpButton>
+                  <Button size="lg">
+                    Get Started
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </SignUpButton>
                 <Button variant="default" size="lg">
                   View on GitHub
                 </Button>

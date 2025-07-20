@@ -72,4 +72,4 @@ class Database:
             contents = json.load(f)
 
         for content in contents:
-            self.add(content)
+            self.add_user(content)

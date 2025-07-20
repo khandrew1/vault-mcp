@@ -7,6 +7,8 @@ export const GET = async () => {
 
   const result = await client.ft.search("vault:users", `@id:${id}`);
 
+  await client.close();
+
   if (!result) return Response.json({});
 
   if (result.total === 0) return Response.json({});

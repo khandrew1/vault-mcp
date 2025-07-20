@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Copy, Eye, EyeOff, Key, Plus, Trash2 } from "lucide-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -41,38 +42,15 @@ interface ApiKey {
 }
 
 export default function ApiKeysPage() {
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>([
-    {
-      id: "1",
-      name: "Production API Key",
-      key: "sk_prod_2023_abcdefghijklmnopqrstuvwxyz123456",
-      createdAt: new Date("2023-01-15"),
-    },
-    {
-      id: "2",
-      name: "Development API Key",
-      key: "sk_dev_2023_zyxwvutsrqponmlkjihgfedcba654321",
-      createdAt: new Date("2023-03-22"),
-    },
-    {
-      id: "3",
-      name: "Testing API Key",
-      key: "sk_test_2023_123456abcdefghijklmnopqrstuvwxyz",
-      createdAt: new Date("2023-06-10"),
-    },
-  ]);
+  const [visible, setVisible] = useState<boolean>(true);
 
-  const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({});
-  const [newKeyName, setNewKeyName] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newlyCreatedKey, setNewlyCreatedKey] = useState<string | null>(null);
+  const { isLoaded, isSignedIn, user } = useUser();
 
-  const toggleKeyVisibility = (id: string) => {
-    setVisibleKeys((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
+  if (!isLoaded) return null;
+
+  if (!isSignedIn) return null;
+
+  console.log(user);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -81,46 +59,24 @@ export default function ApiKeysPage() {
     });
   };
 
-  const createNewApiKey = () => {
-    if (!newKeyName.trim()) {
-      toast.error("Error", {
-        description: "Please provide a name for your API key",
-      });
-      return;
-    }
+  const { primaryEmailAddressId, createdAt } = user;
 
-    // Generate a random API key (in a real app, this would be done on the server)
-    const randomKey = `sk_${Math.random().toString(36).substring(2, 15)}_${Math.random().toString(36).substring(2, 15)}`;
+  const keys = [
+    {
+      id: "2",
+      name: "Production API Key",
+      key: primaryEmailAddressId,
+      createdAt: createdAt,
+    },
+  ];
 
-    const newKey: ApiKey = {
-      id: Date.now().toString(),
-      name: newKeyName,
-      key: randomKey,
-      createdAt: new Date(),
-    };
-
-    setApiKeys([...apiKeys, newKey]);
-    setNewKeyName("");
-    setNewlyCreatedKey(randomKey);
-    setIsDialogOpen(false);
-
-    toast("API Key Created", {
-      description: "Your new API key has been created successfully",
-    });
-  };
-
-  const deleteApiKey = (id: string) => {
-    setApiKeys(apiKeys.filter((key) => key.id !== id));
-    toast("API Key Deleted", {
-      description: "The API key has been deleted successfully",
-    });
-  };
+  const FIVE_MINUTES = 5 * 60 * 1000;
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">API Keys</h1>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        {/* <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
@@ -153,10 +109,10 @@ export default function ApiKeysPage() {
               <Button onClick={createNewApiKey}>Create API Key</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
       </div>
 
-      {newlyCreatedKey && (
+      {Date.now() - createdAt.getTime() <= FIVE_MINUTES && (
         <Card className="border-green-500 bg-green-50 dark:bg-green-950/20">
           <CardHeader>
             <CardTitle className="text-green-700 dark:text-green-400">
@@ -169,12 +125,12 @@ export default function ApiKeysPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2 rounded-md bg-green-100 p-3 dark:bg-green-900/30">
-              <code className="text-sm font-mono">{newlyCreatedKey}</code>
+              <code className="text-sm font-mono">{primaryEmailAddressId}</code>
               <Button
                 size="icon"
                 variant="ghost"
                 className="h-8 w-8"
-                onClick={() => copyToClipboard(newlyCreatedKey)}
+                onClick={() => copyToClipboard(primaryEmailAddressId)}
               >
                 <Copy className="h-4 w-4" />
                 <span className="sr-only">Copy API key</span>
@@ -182,13 +138,13 @@ export default function ApiKeysPage() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button
+            {/* <Button
               variant="outline"
               onClick={() => setNewlyCreatedKey(null)}
               className="w-full"
             >
               I've copied my API key
-            </Button>
+            </Button> */}
           </CardFooter>
         </Card>
       )}
@@ -201,11 +157,10 @@ export default function ApiKeysPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>API Key</TableHead>
                 <TableHead>Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {apiKeys.map((apiKey) => (
+              {keys.map((apiKey) => (
                 <TableRow key={apiKey.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
@@ -218,7 +173,7 @@ export default function ApiKeysPage() {
                       <code
                         className={cn(
                           "font-mono text-xs",
-                          !visibleKeys[apiKey.id] && "filter blur-sm",
+                          visible && "filter blur-sm",
                         )}
                       >
                         {apiKey.key}
@@ -227,15 +182,15 @@ export default function ApiKeysPage() {
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8"
-                        onClick={() => toggleKeyVisibility(apiKey.id)}
+                        onClick={() => setVisible(!visible)}
                       >
-                        {visibleKeys[apiKey.id] ? (
+                        {visible ? (
                           <EyeOff className="h-4 w-4" />
                         ) : (
                           <Eye className="h-4 w-4" />
                         )}
                         <span className="sr-only">
-                          {visibleKeys[apiKey.id] ? "Hide" : "Show"} API key
+                          {visible ? "Hide" : "Show"} API key
                         </span>
                       </Button>
                       <Button
@@ -249,30 +204,19 @@ export default function ApiKeysPage() {
                       </Button>
                     </div>
                   </TableCell>
-                  <TableCell>{apiKey.createdAt.toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
-                      onClick={() => deleteApiKey(apiKey.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Delete API key</span>
-                    </Button>
+                  <TableCell>
+                    {apiKey.createdAt.toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: true,
+                    })}
                   </TableCell>
                 </TableRow>
               ))}
-              {apiKeys.length === 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="text-center py-6 text-muted-foreground"
-                  >
-                    No API keys found. Create your first API key to get started.
-                  </TableCell>
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </CardContent>
