@@ -1,14 +1,20 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { Key, Table } from "lucide-react"
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Key, Table } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "API Key Management Dashboard",
-}
+};
 
 export default function DashboardPage() {
   return (
@@ -51,5 +57,5 @@ export default function DashboardPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

@@ -1,9 +1,24 @@
-import { ArrowRight, Database, Search, Zap, Code, Shield, Globe, CheckCircle } from "lucide-react"
-import Link from "next/link"
+import {
+  ArrowRight,
+  Database,
+  Search,
+  Zap,
+  Code,
+  Shield,
+  Globe,
+  CheckCircle,
+} from "lucide-react";
+import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function Component() {
   return (
@@ -15,13 +30,22 @@ export default function Component() {
           <span className="font-bold text-xl">Vault MCP</span>
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="#features">
+          <Link
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="#features"
+          >
             Features
           </Link>
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="#how-it-works">
+          <Link
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="#how-it-works"
+          >
             How It Works
           </Link>
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="#docs">
+          <Link
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="#docs"
+          >
             Docs
           </Link>
         </nav>
@@ -41,8 +65,9 @@ export default function Component() {
                   <span className="text-blue-600"> AI Agents</span>
                 </h1>
                 <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl">
-                  Enable persistent context and memory across all your LLM providers with Redis-backed storage and
-                  intelligent vector search for RAG.
+                  Enable persistent context and memory across all your LLM
+                  providers with Redis-backed storage and intelligent vector
+                  search for RAG.
                 </p>
               </div>
               <div className="space-x-4">
@@ -62,9 +87,12 @@ export default function Component() {
         <section id="features" className="w-full py-12 md:py-24 lg:py-32">
           <div className="px-4 md:px-6">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Powerful Features</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                Powerful Features
+              </h2>
               <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl mt-4">
-                Everything you need to build intelligent AI applications with persistent memory
+                Everything you need to build intelligent AI applications with
+                persistent memory
               </p>
             </div>
             <div className="grid gap-6 lg:grid-cols-3 lg:gap-12">
@@ -73,7 +101,8 @@ export default function Component() {
                   <Database className="h-10 w-10 text-blue-600 mb-2" />
                   <CardTitle>Redis Backend</CardTitle>
                   <CardDescription>
-                    Lightning-fast in-memory storage with persistence for reliable context management
+                    Lightning-fast in-memory storage with persistence for
+                    reliable context management
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -98,7 +127,8 @@ export default function Component() {
                   <Search className="h-10 w-10 text-green-600 mb-2" />
                   <CardTitle>Vector Search</CardTitle>
                   <CardDescription>
-                    Intelligent semantic search powered by vector embeddings for enhanced RAG capabilities
+                    Intelligent semantic search powered by vector embeddings for
+                    enhanced RAG capabilities
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -123,7 +153,8 @@ export default function Component() {
                   <Globe className="h-10 w-10 text-purple-600 mb-2" />
                   <CardTitle>Universal Compatibility</CardTitle>
                   <CardDescription>
-                    Works seamlessly with OpenAI, Anthropic, Google, and any MCP-compatible client
+                    Works seamlessly with OpenAI, Anthropic, Google, and any
+                    MCP-compatible client
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -148,11 +179,18 @@ export default function Component() {
         </section>
 
         {/* How It Works Section */}
-        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-slate-50">
+        <section
+          id="how-it-works"
+          className="w-full py-12 md:py-24 lg:py-32 bg-slate-50"
+        >
           <div className="px-4 md:px-6">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">How It Works</h2>
-              <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl mt-4">Simple setup, powerful results</p>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                How It Works
+              </h2>
+              <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl mt-4">
+                Simple setup, powerful results
+              </p>
             </div>
             <div className="grid gap-8 lg:grid-cols-3">
               <div className="flex flex-col items-center text-center">
@@ -161,7 +199,8 @@ export default function Component() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">1. Deploy Server</h3>
                 <p className="text-gray-600">
-                  Deploy Vault MCP server to Vercel or your preferred platform with one click
+                  Deploy Vault MCP server to Vercel or your preferred platform
+                  with one click
                 </p>
               </div>
               <div className="flex flex-col items-center text-center">
@@ -169,14 +208,20 @@ export default function Component() {
                   <Zap className="h-8 w-8 text-green-600" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">2. Connect Clients</h3>
-                <p className="text-gray-600">Configure your AI applications to use Vault MCP as a memory provider</p>
+                <p className="text-gray-600">
+                  Configure your AI applications to use Vault MCP as a memory
+                  provider
+                </p>
               </div>
               <div className="flex flex-col items-center text-center">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 mb-4">
                   <Shield className="h-8 w-8 text-purple-600" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">3. Share Context</h3>
-                <p className="text-gray-600">Your AI agents now share memory and context across all interactions</p>
+                <p className="text-gray-600">
+                  Your AI agents now share memory and context across all
+                  interactions
+                </p>
               </div>
             </div>
           </div>
@@ -186,7 +231,9 @@ export default function Component() {
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="px-4 md:px-6">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Easy Integration</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                Easy Integration
+              </h2>
               <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl mt-4">
                 Get started with just a few lines of configuration
               </p>
@@ -195,7 +242,9 @@ export default function Component() {
               <Card>
                 <CardHeader>
                   <CardTitle>MCP Configuration</CardTitle>
-                  <CardDescription>Add Vault MCP to your client configuration</CardDescription>
+                  <CardDescription>
+                    Add Vault MCP to your client configuration
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto">
@@ -246,7 +295,9 @@ export default function Component() {
 
       {/* Footer */}
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-gray-500">© 2024 Vault MCP. Built with Model Context Protocol.</p>
+        <p className="text-xs text-gray-500">
+          © 2024 Vault MCP. Built with Model Context Protocol.
+        </p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link className="text-xs hover:underline underline-offset-4" href="#">
             Terms of Service
@@ -257,5 +308,5 @@ export default function Component() {
         </nav>
       </footer>
     </div>
-  )
+  );
 }
