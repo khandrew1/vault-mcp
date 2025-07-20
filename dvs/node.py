@@ -1,12 +1,9 @@
-from dotenv import load_dotenv
 import json
 from redisvl.index import SearchIndex
 from redis import Redis
 from redisvl.query import VectorQuery
 from redisvl.utils.vectorize import HFTextVectorizer
 import numpy as np
-
-load_dotenv()
 
 class VectorStore:
     def __init__(self, hostname = "redis://localhost:6379", index = "context"):
