@@ -2,7 +2,7 @@ runtime: "container"
 start:
   command: ["uv", "run", "app.py"]
 build:
-  dockerfile: "server/Dockerfile"    # Path to Dockerfile from parent context
+  dockerfile: "Dockerfile"           # Dockerfile is in same directory as smithery.yaml
   dockerBuildPath: ".."              # Build from parent directory
 startCommand:
   type: "http"
