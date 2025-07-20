@@ -1,0 +1,22 @@
+runtime: "container"
+start:
+  command: ["uv", "run", "app.py"]
+build:
+  dockerfile: "Dockerfile"           # Path to your Dockerfile
+  dockerBuildPath: "."               # Docker build context
+startCommand:
+  type: "http"
+  configSchema:                      # JSON Schema for configuration
+    type: "object"
+    properties:
+      apiKey:
+        type: "string"
+        description: "Your API key"
+      redisHostname:
+        type: "string"
+        description: "Redis hostname"
+        default: "localhost"
+    required: ["apiKey"]
+  exampleConfig:
+    apiKey: "8a5db431-1010-4dd8-8506-04738f77d4a9"
+    redisHostname: "localhost"
