@@ -1,0 +1,4 @@
+enrichmcp
+python-dotenv
+redis
+pydantic
