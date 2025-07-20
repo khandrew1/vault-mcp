@@ -1,4 +1,4 @@
-from node import VectorStore
+from vectorstore import VectorStore
 import os
 from dotenv import load_dotenv
 
