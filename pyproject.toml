@@ -1,9 +1,12 @@
 [project]
-name = "server"
+name = "vault-mcp"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "enrichmcp>=0.4.7",
+    "numpy>=2.3.1",
+    "redis>=6.2.0",
+    "redisvl>=0.8.0",
 ]
