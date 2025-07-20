@@ -45,9 +45,9 @@ export default function Component() {
           </Link>
           <Link
             className="text-sm font-medium hover:underline underline-offset-4"
-            href="#docs"
+            href="/dashboard"
           >
-            Docs
+            Dashboard
           </Link>
         </nav>
       </header>

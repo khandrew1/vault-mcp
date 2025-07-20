@@ -21,7 +21,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <header className="sticky top-0 z-10 border-b bg-background">
           <div className="flex h-16 items-center justify-between py-4 w-full">
             <div className="flex items-center gap-2">
-              <Link href="/dashboard" className="font-semibold">
+              <Link href="/" className="font-semibold">
                 Vault MCP
               </Link>
             </div>
