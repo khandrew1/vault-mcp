@@ -56,6 +56,17 @@ class Database:
 
         self.r.hset(f"user:{id}", mapping=data)
 
+    def get_all_projects(self, id):
+        result = self.r.ft("vault:users").search(Query(f'@id:{id}'))
+        
+        if result.docs:
+            doc = result.docs[0]
+
+            return doc.projects.split(",")
+        
+        else:
+            return []
+
     def seed(self, filename):
         with open(filename, "r") as f:
             contents = json.load(f)
