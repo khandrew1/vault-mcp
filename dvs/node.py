@@ -37,8 +37,8 @@ class VectorStore:
         self.hf = HFTextVectorizer(model="sentence-transformers/all-mpnet-base-v2")
 
     def query(self, sentence):
-        vector = self._embed(sentence)
-
+        vector = self._embed(sentence).tobytes()
+        
         query = VectorQuery(
             vector=vector,
             vector_field_name="embedding",
