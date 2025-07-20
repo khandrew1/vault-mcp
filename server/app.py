@@ -1,4 +1,8 @@
 import os
+import sys
+
+# Add parent directory to Python path to import dvs module
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from enrichmcp import EnrichMCP
 from dvs.vectorstore import VectorStore
@@ -77,7 +81,41 @@ async def get_note(query: str) -> Note | None:
     """Search for notes in the memory vector store based on a query."""
     results = memory_vector_store.search("general", query=query)
     if results:
-        return Note.model_validate(results[0].model_dump())
+        return {"content": results[0].content, "title": results[0].title}
+    return None
+
+@app.create
+async def create_context(
+    title: str,
+    summary: str,
+    project: str = "general"
+) -> Context:
+    """Create a new context summary in the context vector store
+
+    This should be used to save important conversation context that can be
+    retrieved later to provide background for future conversations. This tool
+    should only be called specifically when the user asks to save context.
+    
+    Projects are used to group context summaries together, run `get_all_projects` FIRST
+    in order to see the best fit. If nothing fits, create a new project.
+    If no project is specified, it will default to 'general'.
+    """
+    context = Context(title=title, summary=summary)
+    context_vector_store.save(project, context)
+    return Context.model_validate(context.model_dump())
+
+@app.retrieve
+async def get_context(query: str, project: str = "general") -> Context | None:
+    """Search for context summaries in the context vector store based on a query."""
+    results = context_vector_store.search(project, query=query)
+    if results:
+        # Parse the content back into title and summary
+        content = results[0].content
+        if ": " in content:
+            title, summary = content.split(": ", 1)
+            return {"title": title, "summary": summary}
+        else:
+            return {"title": "Context", "summary": content}
     return None
 
 if __name__ == "__main__":

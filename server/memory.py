@@ -77,7 +77,7 @@ class MemoryVectorStore(MemoryStore):
 
     def search(self, project: str, query: str):
         """Search for notes based on a query."""
-        return self.vector_store.query(query)
+        return self.vector_store.query(id=self.user, sentence=query, project=project)
 
 class ContextVectorStore(ContextStore):
     """Concrete implementation of a context store using a vector database."""
@@ -94,4 +94,4 @@ class ContextVectorStore(ContextStore):
 
     def search(self, project: str, query: str):
         """Search for context summaries based on a query."""
-        return self.vector_store.query(query)
+        return self.vector_store.query(id=self.user, sentence=query, project=project)
