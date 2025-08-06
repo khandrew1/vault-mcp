@@ -1,10 +1,12 @@
 import json
+import os
 
 import numpy as np
 from redis import Redis
 from redisvl.index import SearchIndex
 from redisvl.query import VectorQuery
 from redisvl.query.filter import Tag
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from redisvl.utils.vectorize import HFTextVectorizer
 
 class VectorStore:

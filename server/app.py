@@ -10,7 +10,7 @@ from memory import MemoryNote, VectorMemoryStore
 load_dotenv()
 
 # supress logging from stdio
-
+logging.getLogger("huggingface_hub").setLevel(logging.WARNING)
 logging.getLogger("redis").setLevel(logging.WARNING)
 logging.getLogger("redisvl").setLevel(logging.WARNING)
 logging.getLogger("sentence_transformers").setLevel(logging.WARNING)
