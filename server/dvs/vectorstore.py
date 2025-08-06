@@ -1,23 +1,20 @@
 import json
-from redisvl.index import SearchIndex
-from redis import Redis
-from redisvl.query import VectorQuery
-from redisvl.utils.vectorize import HFTextVectorizer
+
 import numpy as np
+from redis import Redis
+from redisvl.index import SearchIndex
+from redisvl.query import VectorQuery
 from redisvl.query.filter import Tag
+from redisvl.utils.vectorize import HFTextVectorizer
 
 class VectorStore:
-    def __init__(self, hostname = "redis://localhost:6379", index = "context"):
+    def __init__(self, hostname = "redis://localhost:6379", index = "memory"):
         self.schema = {
             "index": {
                 "name": index,
                 "prefix": f"user_{index}",
             },
             "fields": [
-                {
-                    "name": "project",
-                    "type": "tag"
-                },
                 {
                     "name": "user",
                     "type": "tag"
@@ -27,7 +24,7 @@ class VectorStore:
                     "type": "text"
                 },
                 {
-                    "name": "embedding",
+                    "name": "content_embedding",
                     "type": "vector",
                     "attrs": {
                         "dims": 768,
@@ -43,36 +40,32 @@ class VectorStore:
         self.index = SearchIndex.from_dict(self.schema, redis_client=client, validate_on_load=True)
         self.index.create(overwrite=True, drop=False)
 
-        self.hf = HFTextVectorizer(model="sentence-transformers/all-mpnet-base-v2")
+        self.hf = HFTextVectorizer(model="sentence-transformers/msmarco-distilbert-base-v4")
 
-    def query(self, id, sentence, project = None):
-        vector = self._embed(sentence).tobytes()
+    def query(self, id: str, sentence: str):
+        vector: bytes = self._embed(sentence)
         
         query = VectorQuery(
             vector=vector,
-            vector_field_name="embedding",
-            return_fields=["project", "user", "content"],
+            vector_field_name="content_embedding",
+            return_fields=["user", "content"],
             num_results=3,
         )
 
         query.set_filter(Tag("user") == id)
 
-        if project:
-            query.set_filter(Tag("project") == project)
-
         return self.index.query(query)
     
-    def add(self, project, user, sentence):
+    def add(self, user, sentence) -> None:
         data = {
-            "project": project,
             "user": user,
             "content": sentence,
-            'embedding': self._embed(sentence).tobytes()
+            "content_embedding": self._embed(sentence)
         }
 
         self.index.load([data])
 
-    def seed(self, filename):
+    def _seed(self, filename) -> None:
         data = []
 
         with open(filename, "r") as f:
@@ -80,13 +73,12 @@ class VectorStore:
 
         for content in contents:
             data.append({
-                "project": "marketing_456",
                 "user": "idn_309aTYWEZUoi8sWqDtTs6rK5e3E",
                 "content": content,
-                "embedding": self._embed(content).tobytes()
+                "content_embedding": self._embed(content)
             })
 
         self.index.load(data)
     
-    def _embed(self, sentence: str):
-        return np.array(self.hf.embed(sentence), dtype=np.float64)
+    def _embed(self, sentence: str) -> bytes:
+        return np.array(self.hf.embed(sentence), dtype=np.float64).tobytes()
